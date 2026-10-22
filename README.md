@@ -1,8 +1,8 @@
-# Governed AI for Accounting Control in Small Enterprises
+# History Before Algorithms: Governed AI for Accounting Control in Small Enterprises
 
 Code and results for the paper:
 
-> A. A. Y. Al-Saffar and M. W. Al-Maadhedee, "Governed AI for Accounting Control in Small Enterprises: Late-Payment Prediction and Invoice Anomaly Detection," submitted to ICAIGS 2026, University of Mosul.
+> A. A. Y. Al-Saffar and M. W. Al-Maadhedee, "History Before Algorithms: Governed AI for Accounting Control in Small Enterprises," submitted to ICAIGS 2026, University of Mosul.
 
 ## What is here
 
