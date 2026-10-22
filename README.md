@@ -1,8 +1,8 @@
-# AI-Assisted Invoicing and Receivables Control in Small Commercial Enterprises
+# Governed AI for Accounting Control in Small Enterprises
 
 Code and results for the paper:
 
-> A. A. Y. Al-Saffar and M. W. Al-Maadhedee, "AI-Assisted Invoicing and Receivables Control in Small Commercial Enterprises: Late-Payment Prediction and Invoice Anomaly Detection in a Mosul Case Study," submitted to ICAIGS 2026, University of Mosul.
+> A. A. Y. Al-Saffar and M. W. Al-Maadhedee, "Governed AI for Accounting Control in Small Enterprises: Late-Payment Prediction and Invoice Anomaly Detection," submitted to ICAIGS 2026, University of Mosul.
 
 ## What is here
 
