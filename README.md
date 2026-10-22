@@ -1,8 +1,8 @@
-# History Before Algorithms: Governed AI for Accounting Control in Small Enterprises
+# Governed AI for Accounting Control in Small Enterprises
 
 Code and results for the paper:
 
-> A. A. Y. Al-Saffar and W. M. Waadalla, "History Before Algorithms: Governed AI for Accounting Control in Small Enterprises," submitted to ICAIGS 2026, University of Mosul.
+> A. A. Y. Al-Saffar, W. M. Waadalla, and A. S. Mahmood, "Governed AI for Accounting Control in Small Enterprises," submitted to ICAIGS 2026, University of Mosul.
 
 ## What is here
 
@@ -51,3 +51,4 @@ Please cite the paper using `CITATION.cff`.
 
 - Ali Abdulwahab Yahya Al-Saffar (corresponding), Department of Business Administration · ali_alsaffar@uomosul.edu.iq · ORCID [0009-0005-0918-893X](https://orcid.org/0009-0005-0918-893X)
 - Waadalla Maan Waadalla, Department of Accounting · ORCID [0000-0003-4023-9254](https://orcid.org/0000-0003-4023-9254)
+- Adnan Salih Mahmood, Department of Management Information Systems · adnan.salih@uomosul.edu.iq · ORCID [0009-0002-7089-5615](https://orcid.org/0009-0002-7089-5615)
