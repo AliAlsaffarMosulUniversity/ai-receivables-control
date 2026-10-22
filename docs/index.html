@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>رقيب الفواتير</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: a shop's debt ledger — summary strip, then tabbed working views; RTL, one column on phones */
+:root{
+  --bg:#f3f5f4; --surface:#ffffff; --ink:#18232b; --muted:#5d6b73; --line:#d9e0dd;
+  --accent:#1f5b8f; --accent-soft:#e3edf6;
+  --good:#2e7d4f; --good-soft:#e2f2e8; --warn:#a86a10; --warn-soft:#fbefd9; --bad:#b3362d; --bad-soft:#f8e3e0;
+  --display:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121a1f; --surface:#1a242a; --ink:#e6ecef; --muted:#9aa8b0; --line:#2c3a42;
+  --accent:#7db3e3; --accent-soft:#1e3347;
+  --good:#6cc595; --good-soft:#18352a; --warn:#e5b25a; --warn-soft:#3a2d14; --bad:#ef8a80; --bad-soft:#3d1f1c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121a1f; --surface:#1a242a; --ink:#e6ecef; --muted:#9aa8b0; --line:#2c3a42;
+  --accent:#7db3e3; --accent-soft:#1e3347;
+  --good:#6cc595; --good-soft:#18352a; --warn:#e5b25a; --warn-soft:#3a2d14; --bad:#ef8a80; --bad-soft:#3d1f1c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:1080px;margin-inline:auto;display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;font-weight:700}
+h1{font-size:1.9rem;color:var(--accent)} h2{font-size:1.25rem} h3{font-size:1.05rem}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+header{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between;border-bottom:2px solid var(--ink);padding-bottom:10px}
+.sub{color:var(--muted);font-size:.9rem}
+.demo{font-size:.78rem;background:var(--warn-soft);color:var(--warn);padding:2px 10px;border-radius:999px;font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.stat .k{font-size:.8rem;color:var(--muted)} .stat .v{font-size:1.35rem;font-weight:600}
+.stat.alert .v{color:var(--bad)}
+@media (max-width:720px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+nav{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+nav button{font:inherit;font-weight:600;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:8px 14px;cursor:pointer}
+nav button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+nav button:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.panel{display:flex;flex-direction:column;gap:12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{font:inherit;font-size:.85rem;background:var(--surface);color:var(--ink);border:0;padding:5px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--surface)}
+.tablebox{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.78rem;color:var(--muted);font-weight:600;white-space:nowrap;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+tr.void td{color:var(--muted);text-decoration:line-through}
+.chip{display:inline-block;font-size:.76rem;font-weight:600;padding:1px 9px;border-radius:999px;white-space:nowrap}
+.c-good{background:var(--good-soft);color:var(--good)} .c-warn{background:var(--warn-soft);color:var(--warn)}
+.c-bad{background:var(--bad-soft);color:var(--bad)} .c-info{background:var(--accent-soft);color:var(--accent)}
+.why{font-size:.8rem;color:var(--muted);display:block;margin-top:2px}
+.btn{font:inherit;font-size:.82rem;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:4px 10px;border-radius:6px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+label{font-size:.85rem;font-weight:600;display:flex;flex-direction:column;gap:4px}
+select,input{font:inherit;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%}
+.meter{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%}
+.verdict{border-inline-start:4px solid var(--line);padding:8px 12px;background:var(--bg);border-radius:4px}
+.verdict.bad{border-color:var(--bad)} .verdict.warn{border-color:var(--warn)} .verdict.good{border-color:var(--good)}
+ul.reasons{margin:0;padding-inline-start:18px;font-size:.88rem}
+.cust{cursor:pointer} .cust:hover td{background:var(--accent-soft)}
+.toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));inset-inline-start:max(16px,env(safe-area-inset-left,0px));background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:6px;font-size:.88rem}
+ol.rules{margin:0;padding-inline-start:22px;display:flex;flex-direction:column;gap:8px}
+ol.rules b{color:var(--accent)}
+footer{color:var(--muted);font-size:.82rem;border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:2px}
+a{color:var(--accent)}
+@media (prefers-reduced-motion:no-preference){.meter i{transition:width .3s}}
+</style>
+</head>
+<body>
+
+<div class="wrap" dir="rtl" lang="ar">
+  <header>
+    <div>
+      <h1>رقيب الفواتير</h1>
+      <div class="sub">رقابة ذكية على المبيعات الآجلة لمحل مواد كهربائية في الموصل</div>
+    </div>
+    <span class="demo">نسخة تجريبية · بيانات افتراضية</span>
+  </header>
+
+  <section class="stats" aria-label="ملخص">
+    <div class="stat"><span class="k">مجموع الديون على الزبائن</span><span class="v num" id="sTotal"></span></div>
+    <div class="stat"><span class="k">زبائن عليهم ديون</span><span class="v num" id="sDebtors"></span></div>
+    <div class="stat alert"><span class="k">زبائن خطر تأخرهم مرتفع</span><span class="v num" id="sHigh"></span></div>
+    <div class="stat alert"><span class="k">فواتير شاذة بانتظار قرارك</span><span class="v num" id="sFlags"></span></div>
+  </section>
+
+  <nav role="tablist" aria-label="الأقسام">
+    <button role="tab" id="t-inv" aria-selected="true" data-p="inv">الفواتير</button>
+    <button role="tab" id="t-cus" aria-selected="false" data-p="cus">الزبائن</button>
+    <button role="tab" id="t-new" aria-selected="false" data-p="new">فاتورة جديدة</button>
+    <button role="tab" id="t-gov" aria-selected="false" data-p="gov">الحوكمة</button>
+  </nav>
+
+  <section class="panel" id="p-inv">
+    <div class="bar">
+      <h2>سجلّ الفواتير الآجلة</h2>
+      <div class="seg" role="group" aria-label="عرض">
+        <button id="fAll" aria-pressed="false">الكل</button>
+        <button id="fFlag" aria-pressed="true">التي تحتاج مراجعة</button>
+      </div>
+    </div>
+    <div class="tablebox"><table>
+      <thead><tr><th>التاريخ</th><th>الزبون</th><th>المبلغ (د.ع)</th><th>خطر التأخر</th><th>فحص الشذوذ</th></tr></thead>
+      <tbody id="invBody"></tbody>
+    </table></div>
+  </section>
+
+  <section class="panel" id="p-cus" hidden>
+    <h2>الزبائن مرتبين حسب خطر التأخر</h2>
+    <div class="tablebox"><table>
+      <thead><tr><th>الزبون</th><th>الرصيد (د.ع)</th><th>فواتير مسددة</th><th>نسبة التأخر السابقة</th><th>معدل أيام التأخر</th><th>خطر التأخر</th></tr></thead>
+      <tbody id="cusBody"></tbody>
+    </table></div>
+    <div class="card" id="stmt" hidden></div>
+  </section>
+
+  <section class="panel" id="p-new" hidden>
+    <h2>إصدار فاتورة آجلة</h2>
+    <div class="grid2">
+      <form class="card" id="newForm">
+        <label for="nCus">الزبون<select id="nCus"></select></label>
+        <label for="nAmt">المبلغ (دينار عراقي)<input id="nAmt" type="number" min="1000" step="1000" inputmode="numeric"></label>
+        <label for="nDate">التاريخ<input id="nDate" type="date"></label>
+        <div class="acts"><button class="btn primary" type="submit">إصدار الفاتورة</button></div>
+        <span class="why">التحليل يظهر مباشرة قبل الإصدار. القرار يبقى لك.</span>
+      </form>
+      <div class="card" id="live" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-gov" hidden>
+    <h2>قواعد الحوكمة المطبقة في النظام</h2>
+    <div class="card">
+      <ol class="rules">
+        <li><b>القرار للإنسان.</b> الإنذار نصيحة فقط. صاحب المحل يقرر تخفيض الدين أو مراجعة الفاتورة.</li>
+        <li><b>كل إنذار مع سببه.</b> يظهر السبب بالأرقام، مثل نسبة التأخر السابقة أو عدد مرات المبلغ المعتاد.</li>
+        <li><b>بلا صفات شخصية.</b> التنبؤ يعتمد على سلوك السداد فقط، ولا يستخدم أي صفة شخصية للزبون.</li>
+        <li><b>سجلّ تدقيق.</b> لا تُحذف الفواتير أبداً. الفاتورة الملغاة تبقى ظاهرة مع تاريخ إلغائها.</li>
+        <li><b>حماية البيانات.</b> أرقام الزبائن وأرصدتهم تبقى على جهاز المحل وتُستخدم لمتابعته فقط.</li>
+        <li><b>مراجعة دورية.</b> تُقارن الإنذارات بالنتائج كل بضعة أشهر، وتُعدّل العتبات إذا كثرت الإنذارات الخاطئة.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>كيف يعمل التحليل</h3>
+      <ul class="reasons">
+        <li>خطر التأخر يُحسب من سجلّ الزبون: نسبة فواتيره المتأخرة سابقاً، ومعدل أيام تأخره. الزبون بلا سجلّ كافٍ يُعلَّم "سجلّ غير كافٍ".</li>
+        <li>الفاتورة الشاذة: مبلغها أكبر من 3 أضعاف معدل الزبون أو أقل من ثلثه، أو انحرافها المعياري أكبر من 3، أو مكررة بالمبلغ نفسه خلال 3 أيام.</li>
+        <li>هذه هي القواعد البسيطة القابلة للتفسير التي اختُبرت في البحث على 2,466 فاتورة حقيقية.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <span>تطبيق عملي مرافق لبحث: History Before Algorithms: Governed AI for Accounting Control in Small Enterprises</span>
+    <span>علي عبد الوهاب يحيى الصفار، وعد الله معن وعد الله · كلية الإدارة والاقتصاد، جامعة الموصل · مؤتمر ICAIGS 2026</span>
+    <span>الكود: <a href="https://github.com/AliAlsaffarMosulUniversity/ai-receivables-control" target="_blank" rel="noopener">github.com/AliAlsaffarMosulUniversity/ai-receivables-control</a></span>
+  </footer>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(()=>{
+const TODAY=new Date('2026-10-22T12:00:00');
+const DAY=864e5, TERM=30;
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const dstr=d=>d.toISOString().slice(0,10);
+const pct=x=>Math.round(x*100)+'%';
+let seed=20261022; const rnd=()=>{seed=(seed*1664525+1013904223)%4294967296;return seed/4294967296};
+const pick=a=>a[Math.floor(rnd()*a.length)];
+
+// ---------- demo customers (behaviour is invented for the demo) ----------
+const CUS=[
+ ['محلات النور للكهربائيات','حي الزهور',.05,450e3],['أبو أحمد للتأسيسات','الدواسة',.15,900e3],
+ ['معرض الفرات للإنارة','حي المثنى',.55,1.2e6],['مكتب الرافدين للمقاولات','حي النبي يونس',.75,2.4e6],
+ ['ورشة الحدباء','باب الطوب',.30,300e3],['محلات السلام','حي الجامعة',.08,650e3],
+ ['أبو مصطفى للكهرباء','الموصل الجديدة',.62,520e3],['شركة دجلة للإنشاءات','حي الضباط',.40,3.1e6],
+ ['محلات الأمانة','سوق النبي جرجيس',.10,380e3],['مولدات الحي العربي','الحي العربي',.85,1.6e6],
+ ['محل ابن الأثير','حي الصديق',.20,240e3],['مجمع الربيع التجاري','حي الربيع',.45,1.9e6],
+ ['محل البشائر','حي الكرامة',0,700e3]
+];
+const customers=CUS.map((c,i)=>({id:i,name:c[0],area:c[1],p:c[2],base:c[3]}));
+const invoices=[]; let nextNo=1001;
+customers.forEach(c=>{
+  const n=c.id===12?1:6+Math.floor(rnd()*9);
+  for(let k=0;k<n;k++){
+    const date=new Date(TODAY-(330-k*(300/n)-rnd()*12)*DAY);
+    const amt=Math.round(c.base*(0.6+rnd()*0.8)/1000)*1000;
+    const due=new Date(+date+TERM*DAY);
+    const late=rnd()<c.p; const daysLate=late?3+Math.floor(rnd()*28):0;
+    const settled=new Date(+due+(late?daysLate:-Math.floor(rnd()*10))*DAY);
+    const open=settled>TODAY;
+    invoices.push({no:nextNo++,cid:c.id,date,amount:amt,due,settled:open?null:settled,daysLate:open?null:daysLate,status:'ok'});
+  }
+});
+// recent open invoices for the summary + three injected anomalies (demo examples)
+customers.forEach(c=>{ if(c.id!==12 && rnd()<.7){const date=new Date(TODAY-(2+Math.floor(rnd()*20))*DAY);
+  invoices.push({no:nextNo++,cid:c.id,date,amount:Math.round(c.base*(0.6+rnd()*0.8)/1000)*1000,due:new Date(+date+TERM*DAY),settled:null,daysLate:null,status:'ok'});}});
+const add=(cid,amount,ago)=>{const date=new Date(TODAY-ago*DAY);invoices.push({no:nextNo++,cid,date,amount,due:new Date(+date+TERM*DAY),settled:null,daysLate:null,status:'ok'})};
+add(4,1450000,3);                 // inflated: ~5x the usual for ورشة الحدباء
+add(7,410000,5);                  // unauthorised discount: far below شركة دجلة's usual
+const src=invoices.filter(v=>v.cid===5&&!v.settled).at(-1)||invoices.filter(v=>v.cid===5).at(-1);
+add(5,src.amount,Math.max(0,Math.round((TODAY-src.date)/DAY)-1)); // duplicate
+invoices.sort((a,b)=>a.date-b.date);
+const payments=[]; invoices.forEach(v=>{if(v.settled)payments.push({cid:v.cid,date:v.settled,amount:v.amount,no:v.no})});
+
+// ---------- analysis ----------
+function history(cid,asOf){
+  const past=invoices.filter(v=>v.cid===cid&&v.status!=='void'&&v.settled&&v.settled<asOf);
+  const n=past.length, lateN=past.filter(v=>v.daysLate>0).length;
+  return {n,lateRate:n?lateN/n:null,meanLate:n?past.reduce((s,v)=>s+v.daysLate,0)/n:null};
+}
+function risk(cid,asOf=TODAY){
+  const h=history(cid,asOf);
+  if(h.n<3) return {level:'none',p:null,h,reasons:['سجلّ الزبون غير كافٍ ('+h.n+' فواتير مسددة). لا يمكن التنبؤ بثقة.']};
+  const z=-2.4+4.2*h.lateRate+0.06*h.meanLate; const p=1/(1+Math.exp(-z));
+  const level=p>=.6?'high':p>=.35?'mid':'low';
+  const reasons=['تأخر في '+Math.round(h.lateRate*h.n)+' من آخر '+h.n+' فواتير ('+pct(h.lateRate)+')','معدل أيام التأخر: '+h.meanLate.toFixed(1)+' يوم'];
+  return {level,p,h,reasons};
+}
+function anomaly(inv,pool=invoices){
+  const others=pool.filter(v=>v.cid===inv.cid&&v!==inv&&v.status!=='void');
+  const r=[];
+  if(others.length>=3){
+    const m=others.reduce((s,v)=>s+v.amount,0)/others.length;
+    const sd=Math.sqrt(others.reduce((s,v)=>s+(v.amount-m)**2,0)/others.length)||1;
+    const ratio=inv.amount/m, z=(inv.amount-m)/sd;
+    if(ratio>3) r.push('المبلغ '+ratio.toFixed(1)+' أضعاف معدل هذا الزبون ('+fmt(m)+' د.ع)');
+    else if(ratio<1/3) r.push('المبلغ '+pct(ratio)+' فقط من معدل هذا الزبون ('+fmt(m)+' د.ع). هل هو خصم غير مصرح به؟');
+    else if(Math.abs(z)>3) r.push('المبلغ بعيد جداً عن المعتاد (انحراف '+z.toFixed(1)+')');
+  }
+  const dup=others.find(v=>v.amount===inv.amount&&v.date<=inv.date&&(inv.date-v.date)<=3*DAY);
+  if(dup) r.push('مكررة: نفس المبلغ لنفس الزبون في الفاتورة رقم '+dup.no+' قبل '+Math.round((inv.date-dup.date)/DAY)+' يوم');
+  return r;
+}
+const balance=cid=>invoices.filter(v=>v.cid===cid&&v.status!=='void'&&!v.settled).reduce((s,v)=>s+v.amount,0);
+const riskChip=r=>r.level==='none'?'<span class="chip c-info">سجلّ غير كافٍ</span>':
+  `<span class="chip ${r.level==='high'?'c-bad':r.level==='mid'?'c-warn':'c-good'}">${r.level==='high'?'مرتفع':r.level==='mid'?'متوسط':'منخفض'} <span class="num">${pct(r.p)}</span></span>`;
+
+// ---------- state ----------
+let filterFlag=true;
+const decisions={}; // invoice no -> 'ok' | 'void'
+try{Object.assign(decisions,JSON.parse(localStorage.getItem('raqib-decisions')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('raqib-decisions',JSON.stringify(decisions))}catch(e){}};
+Object.entries(decisions).forEach(([no,d])=>{const v=invoices.find(x=>x.no==no);if(v&&d==='void')v.status='void'});
+const toast=m=>{const t=document.getElementById('toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2600)};
+const $=id=>document.getElementById(id);
+
+function renderStats(){
+  const bals=customers.map(c=>balance(c.id));
+  $('sTotal').textContent=fmt(bals.reduce((a,b)=>a+b,0))+' د.ع';
+  $('sDebtors').textContent=bals.filter(b=>b>0).length;
+  $('sHigh').textContent=customers.filter(c=>risk(c.id).level==='high').length;
+  $('sFlags').textContent=invoices.filter(v=>v.status==='ok'&&!decisions[v.no]&&anomaly(v).length).length;
+}
+function renderInvoices(){
+  const rows=invoices.slice().reverse().filter(v=>!filterFlag||(anomaly(v).length&&!decisions[v.no]));
+  $('invBody').innerHTML=rows.length?rows.slice(0,60).map(v=>{
+    const c=customers[v.cid], an=v.status==='void'?[]:anomaly(v), r=risk(v.cid,v.date), d=decisions[v.no];
+    let anCell;
+    if(v.status==='void') anCell='<span class="chip c-info">ملغاة بقرارك</span>';
+    else if(an.length&&!d) anCell=`<span class="chip c-bad">تحتاج مراجعة</span>${an.map(x=>`<span class="why">${x}</span>`).join('')}
+      <div class="acts"><button class="btn" data-ok="${v.no}">سليمة، أبقِها</button><button class="btn danger" data-void="${v.no}">إلغاء الفاتورة</button></div>`;
+    else if(an.length&&d==='ok') anCell='<span class="chip c-good">راجعتها: سليمة</span>';
+    else anCell='<span class="chip c-good">طبيعية</span>';
+    return `<tr class="${v.status==='void'?'void':''}"><td class="num">${dstr(v.date)}</td><td>${c.name}<span class="why">فاتورة ${v.no}${v.settled?' · مسددة':' · غير مسددة'}</span></td>
+      <td class="num">${fmt(v.amount)}</td><td>${riskChip(r)}</td><td>${anCell}</td></tr>`}).join('')
+    :'<tr><td colspan="5">لا توجد فواتير تحتاج مراجعة الآن.</td></tr>';
+}
+function renderCustomers(){
+  const list=customers.map(c=>({c,r:risk(c.id),b:balance(c.id)})).sort((a,b)=>(b.r.p??-1)-(a.r.p??-1));
+  $('cusBody').innerHTML=list.map(({c,r,b})=>`<tr class="cust" tabindex="0" data-c="${c.id}"><td>${c.name}<span class="why">${c.area}</span></td>
+    <td class="num">${fmt(b)}</td><td class="num">${r.h.n}</td><td class="num">${r.h.lateRate==null?'—':pct(r.h.lateRate)}</td>
+    <td class="num">${r.h.meanLate==null?'—':r.h.meanLate.toFixed(1)}</td><td>${riskChip(r)}</td></tr>`).join('');
+}
+function renderStatement(cid){
+  const c=customers[cid], r=risk(cid);
+  const ev=[...invoices.filter(v=>v.cid===cid).map(v=>({d:v.date,t:'فاتورة '+v.no+(v.status==='void'?' (ملغاة)':''),debit:v.status==='void'?0:v.amount,credit:0})),
+            ...payments.filter(p=>p.cid===cid).map(p=>({d:p.date,t:'تسديد فاتورة '+p.no,debit:0,credit:p.amount}))].sort((a,b)=>a.d-b.d);
+  let bal=0;
+  $('stmt').innerHTML=`<div class="bar"><h3>كشف حساب: ${c.name}</h3>${riskChip(r)}</div>
+    <ul class="reasons">${r.reasons.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <div class="tablebox"><table><thead><tr><th>التاريخ</th><th>البيان</th><th>مدين</th><th>دائن</th><th>الرصيد</th></tr></thead><tbody>
+    ${ev.map(e=>{bal+=e.debit-e.credit;return `<tr><td class="num">${dstr(e.d)}</td><td>${e.t}</td><td class="num">${e.debit?fmt(e.debit):''}</td><td class="num">${e.credit?fmt(e.credit):''}</td><td class="num">${fmt(bal)}</td></tr>`}).join('')}
+    </tbody></table></div>`;
+  $('stmt').hidden=false; $('stmt').scrollIntoView({block:'nearest'});
+}
+function renderLive(){
+  const cid=+$('nCus').value, amt=+$('nAmt').value, date=$('nDate').value?new Date($('nDate').value+'T12:00:00'):TODAY;
+  const r=risk(cid,date);
+  const probe={no:'جديدة',cid,date,amount:amt,status:'ok'};
+  const an=amt>0?anomaly(probe,[...invoices,probe]):[];
+  const cls=r.level==='high'?'bad':r.level==='mid'?'warn':r.level==='low'?'good':'';
+  const barCol=r.level==='high'?'var(--bad)':r.level==='mid'?'var(--warn)':'var(--good)';
+  $('live').innerHTML=`<h3>تحليل قبل الإصدار</h3>
+    <div class="verdict ${cls}"><div class="bar"><b>خطر تأخر السداد</b>${riskChip(r)}</div>
+      ${r.p!=null?`<div class="meter" role="img" aria-label="احتمال التأخر ${pct(r.p)}"><i style="width:${Math.round(r.p*100)}%;background:${barCol}"></i></div>`:''}
+      <ul class="reasons">${r.reasons.map(x=>`<li>${x}</li>`).join('')}</ul>
+      ${r.level==='high'?'<span class="why">اقتراح: اطلب دفعة مقدمة، أو لا تزد الدين قبل تسديد السابق.</span>':''}</div>
+    <div class="verdict ${an.length?'bad':'good'}"><b>فحص الشذوذ</b>
+      ${an.length?`<ul class="reasons">${an.map(x=>`<li>${x}</li>`).join('')}</ul>`:'<span class="why">المبلغ ضمن المعتاد لهذا الزبون، ولا يوجد تكرار.</span>'}</div>
+    <span class="why">الرصيد الحالي على الزبون: <span class="num">${fmt(balance(cid))}</span> د.ع</span>`;
+}
+function renderAll(){renderStats();renderInvoices();renderCustomers()}
+
+// ---------- events ----------
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  ['inv','cus','new','gov'].forEach(p=>$('p-'+p).hidden=p!==b.dataset.p);
+  if(b.dataset.p==='new')renderLive();
+}));
+$('fAll').onclick=()=>{filterFlag=false;$('fAll').setAttribute('aria-pressed',true);$('fFlag').setAttribute('aria-pressed',false);renderInvoices()};
+$('fFlag').onclick=()=>{filterFlag=true;$('fFlag').setAttribute('aria-pressed',true);$('fAll').setAttribute('aria-pressed',false);renderInvoices()};
+$('invBody').addEventListener('click',e=>{
+  const ok=e.target.dataset.ok, vd=e.target.dataset.void;
+  if(ok){decisions[ok]='ok';toast('سُجّل قرارك: الفاتورة '+ok+' سليمة');}
+  if(vd){decisions[vd]='void';invoices.find(v=>v.no==vd).status='void';toast('أُلغيت الفاتورة '+vd+'. تبقى في السجلّ للتدقيق');}
+  if(ok||vd){save();renderAll();}
+});
+const openCus=e=>{const tr=e.target.closest('tr[data-c]');if(tr)renderStatement(+tr.dataset.c)};
+$('cusBody').addEventListener('click',openCus);
+$('cusBody').addEventListener('keydown',e=>{if(e.key==='Enter')openCus(e)});
+$('nCus').innerHTML=customers.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+$('nCus').value=3; $('nAmt').value=2600000; $('nDate').value=dstr(TODAY);
+['nCus','nAmt','nDate'].forEach(id=>$(id).addEventListener('input',renderLive));
+$('newForm').addEventListener('submit',e=>{
+  e.preventDefault(); const cid=+$('nCus').value, amt=+$('nAmt').value;
+  if(!(amt>0)){toast('اكتب مبلغ الفاتورة أولاً');return}
+  const date=$('nDate').value?new Date($('nDate').value+'T12:00:00'):TODAY;
+  invoices.push({no:nextNo++,cid,date,amount:amt,due:new Date(+date+TERM*DAY),settled:null,daysLate:null,status:'ok'});
+  invoices.sort((a,b)=>a.date-b.date); renderAll(); renderLive();
+  toast('صدرت الفاتورة '+(nextNo-1)+' وأضيفت إلى سجلّ '+customers[cid].name);
+});
+renderAll();
+})();
+</script>
+</body>
+</html>

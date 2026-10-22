@@ -14,6 +14,10 @@ Code and results for the paper:
 | `results/anomaly.json` | All numbers reported for Experiment 2 |
 | `data/` | Place the dataset here (not redistributed) |
 
+## Live demo
+
+An Arabic demo app of both AI control modules, with synthetic data: https://alialsaffarmosuluniversity.github.io/ai-receivables-control/ (source: `docs/index.html`).
+
 ## Data
 
 The experiments use the public IBM **Finance Factoring – Late Payment Histories** dataset
