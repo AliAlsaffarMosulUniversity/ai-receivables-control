@@ -43,7 +43,7 @@ Tested with Python 3, scikit-learn 1.9.1, pandas 3.0.5, numpy 2.5.3.
 Released under the MIT License. You are free to use the code, provided the authors are credited.
 Please cite the paper using `CITATION.cff`.
 
-**Authors:** Department of Business Administration, College of Administration and Economics, University of Mosul, Iraq
+**Authors:** College of Administration and Economics, University of Mosul, Iraq
 
-- Ali Abdulwahab Yahya Al-Saffar (corresponding) · ali_alsaffar@uomosul.edu.iq · ORCID [0009-0005-0918-893X](https://orcid.org/0009-0005-0918-893X)
-- Waadalla Maan Waadalla · ORCID [0000-0003-4023-9254](https://orcid.org/0000-0003-4023-9254)
+- Ali Abdulwahab Yahya Al-Saffar (corresponding), Department of Business Administration · ali_alsaffar@uomosul.edu.iq · ORCID [0009-0005-0918-893X](https://orcid.org/0009-0005-0918-893X)
+- Waadalla Maan Waadalla, Department of Accounting · ORCID [0000-0003-4023-9254](https://orcid.org/0000-0003-4023-9254)
