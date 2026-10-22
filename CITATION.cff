@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite it as below."
+title: "AI-Assisted Invoicing and Receivables Control in Small Commercial Enterprises: Late-Payment Prediction and Invoice Anomaly Detection in a Mosul Case Study"
+authors:
+  - family-names: "Al-Saffar"
+    given-names: "Ali Abdulwahab Yahya"
+    affiliation: "Department of Business Administration, College of Administration and Economics, University of Mosul"
+    email: "ali_alsaffar@uomosul.edu.iq"
+    orcid: "https://orcid.org/0009-0005-0918-893X"
+  - family-names: "Al-Maadhedee"
+    given-names: "Maan Waadalla"
+    affiliation: "Department of Business Administration, College of Administration and Economics, University of Mosul"
+    orcid: "https://orcid.org/0000-0003-4023-9254"
+license: MIT
+date-released: 2026-10-22
+repository-code: "https://github.com/AliAlsaffarMosulUniversity/ai-receivables-control"
+keywords:
+  - accounts receivable
+  - late-payment prediction
+  - anomaly detection
+  - internal control
+  - AI governance

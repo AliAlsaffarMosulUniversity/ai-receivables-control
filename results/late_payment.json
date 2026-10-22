@@ -1,0 +1,144 @@
+{
+  "n_total": 2466,
+  "n_customers": 100,
+  "late_rate_all": 0.35563665855636656,
+  "n_train": 1726,
+  "n_test": 740,
+  "late_rate_train": 0.38180764774044035,
+  "late_rate_test": 0.2945945945945946,
+  "train_period": [
+    "2012-01-03",
+    "2013-05-06"
+  ],
+  "test_period": [
+    "2013-05-06",
+    "2013-12-02"
+  ],
+  "amount_mean": 59.89585563665855,
+  "amount_median": 60.56,
+  "dayslate_mean_given_late": 9.679589509692132,
+  "dispute_rate": 0.22749391727493917,
+  "late_rate_disputed": 0.6827094474153298,
+  "late_rate_undisputed": 0.2593175853018373,
+  "late_rate_electronic": 0.27514546965918535,
+  "late_rate_paper": 0.4323040380047506,
+  "features": [
+    "amount",
+    "credit_term",
+    "electronic",
+    "month",
+    "weekday",
+    "h_n",
+    "h_late_rate",
+    "h_mean_dayslate",
+    "h_dispute_rate",
+    "h_has_history",
+    "amount_vs_hist",
+    "country_391",
+    "country_406",
+    "country_770",
+    "country_818",
+    "country_897"
+  ],
+  "models": {
+    "Majority class (all on time)": {
+      "accuracy": 0.7054054054054054,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "auc": 0.5,
+      "tp": 0,
+      "fp": 0,
+      "fn": 218,
+      "tn": 522
+    },
+    "Rule: previous late rate > 0.5": {
+      "accuracy": 0.827027027027027,
+      "precision": 0.67578125,
+      "recall": 0.7935779816513762,
+      "f1": 0.729957805907173,
+      "auc": 0.8734270097367219,
+      "tp": 173,
+      "fp": 83,
+      "fn": 45,
+      "tn": 439
+    },
+    "Logistic Regression": {
+      "accuracy": 0.8162162162162162,
+      "precision": 0.6814159292035398,
+      "recall": 0.7064220183486238,
+      "f1": 0.6936936936936937,
+      "auc": 0.8823245105276107,
+      "tp": 154,
+      "fp": 72,
+      "fn": 64,
+      "tn": 450,
+      "auc_ci95": [
+        0.8542341253932091,
+        0.9074613832315416
+      ],
+      "top20_precision": 0.7567567567567568,
+      "top20_capture": 0.5137614678899083
+    },
+    "Random Forest": {
+      "accuracy": 0.8189189189189189,
+      "precision": 0.6858407079646017,
+      "recall": 0.7110091743119266,
+      "f1": 0.6981981981981982,
+      "auc": 0.8812436289500509,
+      "tp": 155,
+      "fp": 71,
+      "fn": 63,
+      "tn": 451,
+      "auc_ci95": [
+        0.8530825157879458,
+        0.9066373110222076
+      ],
+      "top20_precision": 0.7567567567567568,
+      "top20_capture": 0.5137614678899083
+    },
+    "Gradient Boosting": {
+      "accuracy": 0.7918918918918919,
+      "precision": 0.6454545454545455,
+      "recall": 0.6513761467889908,
+      "f1": 0.6484018264840182,
+      "auc": 0.8560318464620902,
+      "tp": 142,
+      "fp": 78,
+      "fn": 76,
+      "tn": 444,
+      "auc_ci95": [
+        0.8270383809428729,
+        0.8847257564532056
+      ],
+      "top20_precision": 0.7432432432432432,
+      "top20_capture": 0.5045871559633027
+    }
+  },
+  "best_model": "Logistic Regression",
+  "perm_importance": {
+    "h_mean_dayslate": 0.1052,
+    "h_late_rate": 0.085,
+    "electronic": 0.015,
+    "amount": 0.0033,
+    "h_has_history": 0.0,
+    "credit_term": 0.0,
+    "h_n": -0.0001,
+    "month": -0.0002,
+    "weekday": -0.0003,
+    "h_dispute_rate": -0.0009,
+    "amount_vs_hist": -0.0012,
+    "country (all codes)": -0.0038
+  },
+  "sensitivity_with_disputed": {
+    "accuracy": 0.8405405405405405,
+    "precision": 0.7314814814814815,
+    "recall": 0.7247706422018348,
+    "f1": 0.728110599078341,
+    "auc": 0.909267461070688,
+    "tp": 158,
+    "fp": 58,
+    "fn": 60,
+    "tn": 464
+  }
+}
