@@ -2,7 +2,7 @@
 
 Code and results for the paper:
 
-> A. A. Y. Al-Saffar and M. W. Al-Maadhedee, "History Before Algorithms: Governed AI for Accounting Control in Small Enterprises," submitted to ICAIGS 2026, University of Mosul.
+> A. A. Y. Al-Saffar and W. M. Waadalla, "History Before Algorithms: Governed AI for Accounting Control in Small Enterprises," submitted to ICAIGS 2026, University of Mosul.
 
 ## What is here
 
@@ -46,4 +46,4 @@ Please cite the paper using `CITATION.cff`.
 **Authors:** Department of Business Administration, College of Administration and Economics, University of Mosul, Iraq
 
 - Ali Abdulwahab Yahya Al-Saffar (corresponding) · ali_alsaffar@uomosul.edu.iq · ORCID [0009-0005-0918-893X](https://orcid.org/0009-0005-0918-893X)
-- Maan Waadalla Al-Maadhedee · ORCID [0000-0003-4023-9254](https://orcid.org/0000-0003-4023-9254)
+- Waadalla Maan Waadalla · ORCID [0000-0003-4023-9254](https://orcid.org/0000-0003-4023-9254)
